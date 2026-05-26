@@ -1,16 +1,11 @@
-import { defineBundledChannelEntry } from "openclaw/plugin-sdk/channel-entry-contract";
+import { defineChannelPluginEntry } from "openclaw/plugin-sdk/channel-core";
+import { twilioSmsPlugin } from "./src/channel.js";
+import { setTwilioSmsRuntime } from "./src/runtime.js";
 
-export default defineBundledChannelEntry({
+export default defineChannelPluginEntry({
   id: "twilio-sms",
   name: "Twilio SMS",
   description: "Twilio Programmable SMS channel plugin",
-  importMetaUrl: import.meta.url,
-  plugin: {
-    specifier: "./channel-plugin-api.js",
-    exportName: "twilioSmsPlugin",
-  },
-  runtime: {
-    specifier: "./runtime-api.js",
-    exportName: "setTwilioSmsRuntime",
-  },
+  plugin: twilioSmsPlugin,
+  setRuntime: setTwilioSmsRuntime,
 });

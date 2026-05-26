@@ -1,5 +1,7 @@
 {
   "id": "twilio-sms",
+  "name": "Twilio SMS",
+  "description": "Hosted SMS channel for OpenClaw via Twilio Programmable Messaging",
   "activation": {
     "onStartup": false
   },

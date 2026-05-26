@@ -1,18 +1,35 @@
----
-summary: "Twilio Programmable SMS channel setup, target syntax, and current MVP limits"
-read_when:
-  - You want to send SMS through Twilio from OpenClaw
-  - You are configuring Twilio Account SID, Auth Token, and sender numbers
-  - You are reviewing Twilio SMS channel limitations before enabling inbound messages
-title: "Twilio SMS"
----
+# OpenClaw Twilio SMS
 
 Twilio SMS connects OpenClaw to carrier SMS through Twilio Programmable Messaging.
 
-Status: bundled plugin in early MVP shape. Outbound text sends use the shared
-message delivery path and durable receipts. Inbound SMS webhooks verify Twilio
-signatures, reject replays, use bounded request bodies, and default to
-pairing-first sender authorization before model turns run.
+This is an external OpenClaw channel plugin. It is intentionally packaged for
+the ClawHub/community plugin path rather than as a bundled OpenClaw core PR.
+
+Outbound text sends use the shared OpenClaw message delivery path and durable
+receipts. Inbound SMS webhooks verify Twilio signatures, reject replays, use
+bounded request bodies, and default to pairing-first sender authorization before
+model turns run.
+
+## Install
+
+ClawHub package publishing is the intended distribution path:
+
+```bash
+openclaw plugins install clawhub:clawsean/openclaw-twilio-sms
+```
+
+Until the ClawHub package is published, install from a local checkout:
+
+```bash
+git clone https://github.com/clawSean/openclaw-twilio-sms.git
+cd openclaw-twilio-sms
+npm install
+npm run build
+openclaw plugins install "$(pwd)"
+```
+
+Gateway/plugin reloads are required after installing or changing plugin code.
+Do not rely on a config hot reload for source-code changes.
 
 ## Configure
 
@@ -38,6 +55,7 @@ Environment variables for the default account:
 - TWILIO_ACCOUNT_SID
 - TWILIO_AUTH_TOKEN
 - TWILIO_SMS_FROM
+- TWILIO_MESSAGING_SERVICE_SID
 
 Configure the Twilio Messaging webhook URL to:
 
@@ -50,6 +68,11 @@ behind a reverse proxy. Signature verification uses publicUrl as the trusted
 origin and the incoming request path/query as the signed webhook URL. Without
 publicUrl, the plugin uses the direct Host header and does not trust forwarded
 host headers.
+
+**Proxy safety:** set `publicUrl` in production whenever Twilio reaches
+OpenClaw through a proxy, tunnel, or load balancer. Leaving it unset is intended
+for direct/local deployments where the incoming `Host` header is already the URL
+Twilio signed.
 
 You can use a Messaging Service instead of a sender number:
 
@@ -153,3 +176,17 @@ The inbound path:
 
 Keep dmPolicy as pairing or allowlist unless you explicitly want public inbound
 SMS. The channel remains text-only; MMS/media is deferred.
+
+Replay protection currently uses an in-process cache. That is enough for a
+single Gateway process, but clustered or multi-replica deployments should put
+Twilio webhooks behind sticky routing or add a shared replay store before
+exposing high-volume traffic.
+
+## Prior Art
+
+See [EXISTING_WORK.md](EXISTING_WORK.md) for the ClawHub/GitHub redundancy
+review. The short version: there are several public Twilio SMS attempts, but no
+ClawHub-listed first-class OpenClaw channel plugin was found. This package is
+shaped to avoid repeating the prior core PR path and to address known review
+notes around fail-closed webhook auth, replay protection, rate/in-flight
+control, and plain-SMS formatting.

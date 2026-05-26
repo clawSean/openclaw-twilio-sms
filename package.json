@@ -1,19 +1,45 @@
 {
-  "name": "@openclaw/twilio-sms",
-  "version": "2026.5.22",
-  "private": true,
-  "description": "OpenClaw Twilio SMS channel plugin",
+  "name": "@clawsean/openclaw-twilio-sms",
+  "version": "0.1.0",
+  "private": false,
+  "description": "External OpenClaw Twilio SMS channel plugin",
   "type": "module",
+  "files": [
+    "dist",
+    "openclaw.plugin.json",
+    "README.md",
+    "EXISTING_WORK.md"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./api": "./dist/api.js",
+    "./channel-plugin-api": "./dist/channel-plugin-api.js",
+    "./gateway-auth-api": "./dist/gateway-auth-api.js",
+    "./runtime-api": "./dist/runtime-api.js",
+    "./setup-entry": "./dist/setup-entry.js"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "test": "vitest run src/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
   "dependencies": {
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@types/node": "^25.0.0",
+    "openclaw": "^2026.5.22",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.5.22"
   },
   "openclaw": {
     "extensions": [
-      "./index.ts"
+      "./dist/index.js"
     ],
+    "setupEntry": "./dist/setup-entry.js",
     "channel": {
       "id": "twilio-sms",
       "label": "Twilio SMS",
@@ -50,6 +76,37 @@
           ]
         }
       }
+    },
+    "install": {
+      "clawhubSpec": "clawsean/openclaw-twilio-sms",
+      "npmSpec": "@clawsean/openclaw-twilio-sms",
+      "localPath": ".",
+      "defaultChoice": "clawhub",
+      "minHostVersion": ">=2026.5.22"
+    },
+    "compat": {
+      "pluginApi": ">=2026.5.22",
+      "minGatewayVersion": ">=2026.5.22"
+    },
+    "build": {
+      "openclawVersion": "2026.5.22",
+      "pluginSdkVersion": "2026.5.22"
+    },
+    "release": {
+      "publishToClawHub": true,
+      "publishToNpm": false
     }
+  },
+  "keywords": [
+    "openclaw",
+    "twilio",
+    "sms",
+    "channel",
+    "plugin"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clawSean/openclaw-twilio-sms.git"
   }
 }
