@@ -1,0 +1,55 @@
+{
+  "name": "@openclaw/twilio-sms",
+  "version": "2026.5.22",
+  "private": true,
+  "description": "OpenClaw Twilio SMS channel plugin",
+  "type": "module",
+  "dependencies": {
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@openclaw/plugin-sdk": "workspace:*"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ],
+    "channel": {
+      "id": "twilio-sms",
+      "label": "Twilio SMS",
+      "selectionLabel": "Twilio SMS",
+      "detailLabel": "Twilio Programmable SMS",
+      "docsPath": "/channels/twilio-sms",
+      "docsLabel": "twilio-sms",
+      "blurb": "hosted SMS via Twilio Programmable Messaging.",
+      "systemImage": "message.badge",
+      "quickstartAllowFrom": true,
+      "cliAddOptions": [
+        {
+          "flags": "--twilio-account-sid <sid>",
+          "description": "Twilio Account SID"
+        },
+        {
+          "flags": "--twilio-auth-token <token>",
+          "description": "Twilio Auth Token"
+        },
+        {
+          "flags": "--twilio-from <e164>",
+          "description": "Twilio sender phone number"
+        }
+      ],
+      "configuredState": {
+        "env": {
+          "allOf": [
+            "TWILIO_ACCOUNT_SID",
+            "TWILIO_AUTH_TOKEN"
+          ],
+          "anyOf": [
+            "TWILIO_SMS_FROM",
+            "TWILIO_MESSAGING_SERVICE_SID"
+          ]
+        }
+      }
+    }
+  }
+}
