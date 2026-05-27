@@ -114,6 +114,25 @@ describe("Twilio SMS webhook handler", () => {
     });
   });
 
+  it("accepts Twilio SMS SID fallback fields", async () => {
+    const form = new URLSearchParams();
+    form.set("AccountSid", "AC123");
+    form.set("SmsSid", "SM_FALLBACK");
+    form.set("From", "+15551230001");
+    form.set("To", "+15551230000");
+    form.set("Body", "hello");
+
+    expect(parseTwilioSmsWebhookEvent(form.toString())).toMatchObject({
+      messageSid: "SM_FALLBACK",
+    });
+
+    form.delete("SmsSid");
+    form.set("SmsMessageSid", "SM_MESSAGE_FALLBACK");
+    expect(parseTwilioSmsWebhookEvent(form.toString())).toMatchObject({
+      messageSid: "SM_MESSAGE_FALLBACK",
+    });
+  });
+
   it("acks valid webhooks and dispatches the event asynchronously", async () => {
     const { rawBody, headers } = await bodyAndHeaders();
     const handleEvent = vi.fn<() => Promise<void>>(async () => {});

@@ -49,4 +49,36 @@ describe("Twilio SMS account resolution", () => {
     expect(account.fromNumber).toBe("+15551230000");
     expect(account.defaultTo).toBe("+15551230001");
   });
+
+  it("lists and resolves multiple configured accounts", () => {
+    const cfg = {
+      channels: {
+        "twilio-sms": {
+          accountSid: "ACBASE",
+          authToken: "base-token",
+          fromNumber: "+15551230000",
+          defaultAccount: "ops",
+          accounts: {
+            ops: {
+              accountSid: "ACOPS",
+              authToken: "ops-token",
+              messagingServiceSid: "MGOPS",
+            },
+            alerts: {
+              accountSid: "ACALERTS",
+              authToken: "alerts-token",
+              fromNumber: "+15551230002",
+            },
+          },
+        },
+      },
+    };
+
+    expect(listTwilioSmsAccountIds(cfg)).toEqual(["default", "ops", "alerts"]);
+    expect(resolveTwilioSmsAccount({ cfg }).accountId).toBe("ops");
+    expect(resolveTwilioSmsAccount({ cfg }).messagingServiceSid).toBe("MGOPS");
+    expect(resolveTwilioSmsAccount({ cfg, accountId: "alerts" }).fromNumber).toBe(
+      "+15551230002",
+    );
+  });
 });

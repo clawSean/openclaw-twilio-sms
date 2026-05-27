@@ -182,6 +182,16 @@ single Gateway process, but clustered or multi-replica deployments should put
 Twilio webhooks behind sticky routing or add a shared replay store before
 exposing high-volume traffic.
 
+## Known limitations
+
+- Replay protection is process-local. Use a single Gateway process, sticky
+  routing, or a shared replay store before exposing clustered/high-volume SMS
+  traffic.
+- The MVP is SMS text-only. MMS/media, groups, reactions, edits, polls, typing
+  indicators, and threads are intentionally out of scope.
+- A redacted live proof bundle is still required before treating the package as
+  production-ready or asking reviewers to bless the ClawHub listing.
+
 ## Prior Art
 
 See [EXISTING_WORK.md](EXISTING_WORK.md) for the ClawHub/GitHub redundancy

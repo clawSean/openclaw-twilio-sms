@@ -42,4 +42,36 @@ describe("Twilio SMS outbound formatting", () => {
     expect(results.map((result) => result.messageId)).toEqual(["SM1", "SM2", "SM3"]);
     expect(send.mock.calls.map((call) => call[1])).toEqual(["hello", "there", "friend"]);
   });
+
+  it("does not split text at the configured chunk boundary", async () => {
+    const send = vi.fn(async (to: string, text: string) => {
+      return {
+        messageId: "SM1",
+        chatId: to,
+        toJid: to,
+        receipt: createTwilioSmsSendReceipt({ messageId: "SM1", to, kind: "text" }),
+      };
+    });
+    const cfg = {
+      channels: {
+        "twilio-sms": {
+          accountSid: "AC123",
+          authToken: "secret",
+          fromNumber: "+15551230000",
+          textChunkLimit: 1530,
+        },
+      },
+    };
+    const text = "x".repeat(1530);
+
+    const results = await sendFormattedTwilioSmsText({
+      cfg,
+      to: "+15551230001",
+      text,
+      deps: { "twilio-sms": send },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(send).toHaveBeenCalledWith("+15551230001", text, expect.anything());
+  });
 });
