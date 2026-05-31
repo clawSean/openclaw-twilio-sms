@@ -10,6 +10,28 @@ receipts. Inbound SMS webhooks verify Twilio signatures, reject replays, use
 bounded request bodies, and default to pairing-first sender authorization before
 model turns run.
 
+## Native SMS alignment
+
+This repository is the external/ClawHub path for Twilio SMS. It is also prior
+art and proof support for OpenClaw's native SMS direction:
+
+- Public RFC: [openclaw/openclaw#85857](https://github.com/openclaw/openclaw/issues/85857)
+- Native SMS PR: [openclaw/openclaw#88476](https://github.com/openclaw/openclaw/pull/88476)
+
+The goal is not to compete with a native OpenClaw `sms` channel. If native SMS
+lands, this plugin remains useful as an installable external option, a
+security/proof reference, and a compatibility path for deployments that want a
+provider-specific `twilio-sms` channel.
+
+Areas this plugin can help validate upstream:
+
+- pairing-first sender admission
+- Twilio signature verification and replay handling
+- bounded webhook bodies and fail-closed auth behavior
+- SMS-safe Markdown flattening and chunking
+- durable receipts carrying Twilio Message SIDs
+- redacted live Twilio inbound/outbound proof from a real A2P setup
+
 ## Install
 
 ClawHub package publishing is the intended distribution path:
@@ -192,6 +214,8 @@ exposing high-volume traffic.
 - A redacted live proof bundle is still required before treating the package as
   production-ready or asking reviewers to bless the ClawHub listing.
 
+See [PROOF_PLAN.md](PROOF_PLAN.md) for the redacted live-proof checklist.
+
 ## Prior Art
 
 See [EXISTING_WORK.md](EXISTING_WORK.md) for the ClawHub/GitHub redundancy
@@ -200,3 +224,8 @@ ClawHub-listed first-class OpenClaw channel plugin was found. This package is
 shaped to avoid repeating the prior core PR path and to address known review
 notes around fail-closed webhook auth, replay protection, rate/in-flight
 control, and plain-SMS formatting.
+
+This work also connects to the later native-SMS effort in
+[openclaw/openclaw#88476](https://github.com/openclaw/openclaw/pull/88476).
+The preferred outcome is a polished first-class OpenClaw SMS experience, with
+this repository preserving the external plugin path and implementation trail.

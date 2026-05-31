@@ -8,7 +8,8 @@
     "dist",
     "openclaw.plugin.json",
     "README.md",
-    "EXISTING_WORK.md"
+    "EXISTING_WORK.md",
+    "PROOF_PLAN.md"
   ],
   "exports": {
     ".": "./dist/index.js",
